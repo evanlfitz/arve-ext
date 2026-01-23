@@ -39,6 +39,7 @@ class add_data:
                                  "cubic",
                                  "previous",
                                  "next"]                      = "cubic",
+        read_ref_spec  : bool                                 = True   ,
         ) -> None:
         """Add data.
 
@@ -80,6 +81,8 @@ class add_data:
             spectra already on the same wavelength grid, by default False
         interpolation : Literal["linear", "nearest", "nearest-up", "zero", "slinear", "quadratic", "cubic", "previous", "next"], optional
             kind of interpolation of spectra onto common wavelength grid, by default "cubic"
+        read_ref_spec : bool, optional
+            read reference spectrum from the first element of list of files, by default True
 
         Returns
         -------
@@ -134,6 +137,7 @@ class add_data:
             "berv_corrected": berv_corrected,
             "same_wave_grid": same_wave_grid,
             "interpolation" : interpolation,
+            "read_ref_spec" : read_ref_spec,
             "files"         : files
             }
 
@@ -146,6 +150,7 @@ class add_data:
             # if not provided, make BERV values an array with zeros to be populated
             if berv_val is None:
                 self.time["berv_val"] = np.zeros(len(files))
+            
             
             # read reference (0th) spectrum
             wave_val, flux_val, flux_err = self.read_spec(0)

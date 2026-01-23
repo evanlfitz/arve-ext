@@ -41,7 +41,7 @@ class compute_spec_reference:
             N_spec = self.spec["N_spec"]
 
         # read data from input
-        if self.spec["path"] is None:
+        if self.spec["path"] is None and self.spec["read_ref_spec"] == True:
 
             # read data
             flux_val, flux_err = [self.spec[key] for key in ["flux_val", "flux_err"]]
@@ -51,7 +51,7 @@ class compute_spec_reference:
             ref_flux_val = np.array([np.average(flux_val[:N_spec,i], weights=1/flux_err[:N_spec,i]**2, axis=0) for i in range(N_ord)])
             ref_flux_err = np.array([np.sqrt(1/np.sum(1/flux_err[:N_spec,i]**2, axis=0))                       for i in range(N_ord)])
         
-        # read data from path
+        # build reference from input files
         else:
 
             # loop spectra
