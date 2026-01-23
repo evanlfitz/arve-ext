@@ -2,6 +2,8 @@ from   astropy.io        import fits
 import numpy             as     np
 import pandas            as     pd
 from   scipy.interpolate import interp1d
+from barycorrpy import get_BC_vel, JDUTC_to_BJDTDB, get_stellar_data
+from astropy.time import Time
 
 class read_spec:
 
@@ -110,6 +112,20 @@ class read_spec:
                                 "flux_val": hdul[1].data       ,
                                 "flux_err": hdul[4].data**(1/2)}
 
+
+                # instrument: HPF
+                if self.spec["instrument"] == "hpf":
+                    if i == 0:
+                        self.spec["medium"    ] = "vac"
+                        self.spec["resolution"] = 55000
+                    self.time["time_val"][i] = float(hdul[0].header["JD_FW15"])
+                    # hard coded to only do the barycentric correction for order 15
+                    self.time["berv_val"][i] = -1*self.get_barycentric_correction(self.arve.star.target,self.time["time_val"][i])
+                    if self.spec["format"] == "s2d":
+                        file = {"wave_val": hdul[7].data,
+                                "flux_val": hdul[1].data,
+                                "flux_err": hdul[4].data**(1/2)}
+
                 # instrument: NIRPS
                 if self.spec["instrument"] == "nirps":
                     if i == 0:
@@ -209,3 +225,17 @@ class read_spec:
                 flux_err = flux_err_inter
         
         return wave_val, flux_val, flux_err
+            
+    def get_barycentric_correction(self, StarName,OrderJD):
+        '''
+        # StarName must be Simbad queryable
+        # specfile is the spectrum file
+        # Order is the specific order you want the correction for, Order 19 is for He10830
+        # HPF Orders range from 0 to 27
+        # Returns BaryVel in km/s
+        '''
+        stardatadic, warnings = get_stellar_data(StarName)
+        #OrderJD = #float(fits.getval(specfile,'JD_FW{0}'.format(Order)))
+        BaryVel = get_BC_vel(JDUTC=Time(OrderJD,format='jd'),lat=30.681,longi=-104.0147,alt=2025,**stardatadic)[0][0]
+        #bjd = JDUTC_to_BJDTDB(JDUTC=Time(OrderJD,format='jd'),lat=30.681,longi=-104.0147,alt=2025,**stardatadic)[0][0]
+        return BaryVel/1e3  # return in km/s
