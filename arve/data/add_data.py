@@ -149,7 +149,14 @@ class add_data:
                 self.time["time_val"] = np.zeros(len(files))
             # if not provided, make BERV values an array with zeros to be populated
             if berv_val is None:
-                self.time["berv_val"] = np.zeros(len(files))
+                if self.spec["instrument"] == "neid" and self.spec["format"] == "s2d":
+                    
+                    # neid applies barycentric corrections separately to each order
+                    self.time["berv_val"] = np.zeros((len(files),122))
+                    
+                else:
+                    
+                    self.time["berv_val"] = np.zeros(len(files))
             
             
             # read reference (0th) spectrum

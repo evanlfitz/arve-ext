@@ -102,7 +102,9 @@ class read_spec:
                         self.spec["medium"    ] = "vac"
                         self.spec["resolution"] = 110000
                     self.time["time_val"][i] = hdul[0].header["OBSJD"]
-                    self.time["berv_val"][i] = hdul[0].header["SSBRV100"]*(-1)
+                    
+                    for j in range(hdul[7].data.shape[0]):
+                        self.time["berv_val"][i][j] = hdul[0].header["SSBRV"+str(173-j).zfill(3)]*(-1)
                     if self.spec["format"] == "s2d":
                         file = {"wave_val": hdul[7].data       ,
                                 "flux_val": hdul[1].data       ,
@@ -182,7 +184,10 @@ class read_spec:
             berv_val = self.time["berv_val"]
             wave_val = self.arve.functions.doppler_shift(wave=wave_val, v=-vrad_sys)
             if self.spec["berv_corrected"] == False:
-                wave_val = self.arve.functions.doppler_shift(wave=wave_val, v=-berv_val[i])
+                if self.spec["instrument"] == "neid" and self.spec["format"] == "s2d":
+                    wave_val = self.arve.functions.doppler_shift_2d(wave=wave_val, v=-berv_val[i])
+                else:
+                    wave_val = self.arve.functions.doppler_shift(wave=wave_val, v=-berv_val[i])
 
             # interpolate flux values and errors on reference wavelength grid
             if (self.spec["same_wave_grid"] == False) & (i > 0):

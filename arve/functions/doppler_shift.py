@@ -26,3 +26,28 @@ class doppler_shift:
         c = self.constants["c"] # [km/s] speed of light in vacuum
 
         return wave*((1+v/c)/(1-v/c))**(1/2)
+    
+    def doppler_shift_2d(
+        self,
+        wave : float | np.ndarray,
+        v    : float | np.ndarray,
+        ) -> float | np.ndarray:
+        """Doppler shift.
+
+        Parameters
+        ----------
+        wave : float | np.ndarray
+            wavelength(s)
+        v : float
+            velocity in km/s
+
+        Returns
+        -------
+        float | np.ndarray
+            Doppler-shifted wavelength(s)
+        """
+
+        # read constants
+        c = self.constants["c"] # [km/s] speed of light in vacuum
+
+        return (wave.T * ((1+v/c)/(1-v/c))**(1/2)).T
