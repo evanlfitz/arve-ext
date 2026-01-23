@@ -5,6 +5,7 @@ from .gls_periodogram    import gls_periodogram
 from .inverted_gaussian  import inverted_gaussian
 from .keplerian          import keplerian
 from .sptype_to_num      import sptype_to_num
+from .get_barycentric_correction import get_barycentric_correction
 
 class Functions(
     convert_air_to_vac,
@@ -13,7 +14,8 @@ class Functions(
     gls_periodogram,
     inverted_gaussian,
     keplerian,
-    sptype_to_num
+    sptype_to_num,
+    get_barycentric_correction
     ):
     """ARVE Functions subclass.
     """
