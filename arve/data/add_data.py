@@ -153,6 +153,10 @@ class add_data:
                     
                     # neid applies barycentric corrections separately to each order
                     self.time["berv_val"] = np.zeros((len(files),122))
+                elif self.spec["instrument"] == "hpf" and self.spec["format"] == "s2d":
+
+                    # hpf applies barycentric corrections separately to each order
+                    self.time["berv_val"] = np.zeros((len(files),28))
                     
                 else:
                     
