@@ -13,8 +13,8 @@ class get_barycentric_correction:
 
   def get_barycentric_correction(
     self, 
-    OrderJD : float
-    ) -> float:
+    OrderJD : float | np.ndarray,
+    ) -> float | np.ndarray:
           '''
           # StarName must be Simbad queryable
           # specfile is the spectrum file
@@ -24,7 +24,9 @@ class get_barycentric_correction:
           '''
           stardatadic, warnings = _get_stellar_data(self.arve.star.target)
           #OrderJD = #float(fits.getval(specfile,'JD_FW{0}'.format(Order)))
-          BaryVel = get_BC_vel(JDUTC=Time(OrderJD,format='jd'),lat=30.681,longi=-104.0147,alt=2025,**stardatadic)[0][0]
+          BaryVel = np.zeros(len(OrderJD))
+          for i,date in enumerate(OrderJD):
+            BaryVel[i] = get_BC_vel(JDUTC=Time(date,format='jd'),lat=30.681,longi=-104.0147,alt=2025,**stardatadic)[0][0]
           #bjd = JDUTC_to_BJDTDB(JDUTC=Time(OrderJD,format='jd'),lat=30.681,longi=-104.0147,alt=2025,**stardatadic)[0][0]
           return BaryVel/1e3  # return in km/s
   
@@ -39,7 +41,7 @@ def _get_stellar_data(name=''):
   '''
   warning = []
 
-  print(name)
+  #print(name)
   
   customSimbad = Simbad()
   customSimbad.add_votable_fields('ra', 'dec','pmra','pmdec', 'plx_value','rvz_radvel')
