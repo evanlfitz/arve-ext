@@ -118,7 +118,12 @@ class read_spec:
                         self.spec["resolution"] = 55000
                     self.time["time_val"][i] = float(hdul[0].header["JD_FW15"])
                     # hard coded to only do the barycentric correction for order 15
-                    self.time["berv_val"][i] = -1*self.arve.functions.get_barycentric_correction(self.time["time_val"][i])
+                    times = np.zeros(hdul[1].data.shape[0])
+                    for j in range(hdul[1].data.shape[0]):
+                        times[j] = hdul[0].header["JD_FW"+str(j)]
+                    
+                    self.time["berv_val"][i] = self.arve.functions.get_barycentric_correction(times)*(-1)
+                    # self.time["berv_val"][i] = -1*self.arve.functions.get_barycentric_correction(self.time["time_val"][i])
                     if self.spec["format"] == "s2d":
                         file = {"wave_val": hdul[7].data,
                                 "flux_val": hdul[1].data,
